@@ -117,12 +117,31 @@ main {
     box-shadow: 0 6px 20px rgba(0,0,0,0.12);
     transform: translateY(-3px);
 }
+
+/* ✅ Header with text left, toggle right */
 .module h2 {
     margin-bottom: 16px;
     font-size: 20px;
     padding: 10px 14px;
     border-radius: 10px;
     background: #f1f3f5;
+    display: flex;
+    justify-content: space-between;  /* name left, toggle right */
+    align-items: center;
+    cursor: pointer;
+}
+
+/* ✅ Toggle always on right */
+.toggle-icon {
+    font-weight: bold;
+    font-size: 22px;
+    color: #228BE6;
+    margin-left: auto;   /* push to right */
+    text-align: right;
+    transition: transform 0.2s ease;
+}
+.toggle-icon.open {
+    transform: rotate(0deg);
 }
 
 /* Grid layout */
@@ -130,8 +149,10 @@ main {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 14px;
+    transition: max-height 0.4s ease, padding 0.3s ease;
 }
 
+/* Card styling */
 .card {
     border-radius: 14px;
     padding: 16px;
@@ -167,3 +188,31 @@ main {
 .card:nth-child(4) .count { background: #FFD6A5; }
 .card:nth-child(5) .count { background: #FFA8A8; }
 .card:nth-child(6) .count { background: #C8F7C5; }
+
+/* ✅ Collapse behaviour ONLY on mobile */
+@media (max-width: 767px) {
+    .module .grid {
+        max-height: 0;
+        overflow: hidden;
+        padding-top: 0;
+    }
+    .module.open .grid {
+        max-height: 2000px;
+        padding-top: 10px;
+    }
+    .toggle-icon {
+        display: inline-block;
+    }
+}
+
+/* ✅ Desktop: always expanded, hide toggle */
+@media (min-width: 768px) {
+    .module .grid {
+        display: grid !important;
+        max-height: none !important;
+        padding-top: 10px !important;
+    }
+    .toggle-icon {
+        display: none;
+    }
+}
