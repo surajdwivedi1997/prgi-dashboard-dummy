@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PRGI Applications Dashboard</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+    <div class="filters">
+        <!-- Title -->
+        <strong style="font-size: 18px;">Application Status Report of Press Sewa Portal</strong>
+
+        <!-- Dropdown + Apply + Excel button -->
+        <div class="action-row">
+            <select id="rangeSelect">
+                <option value="">-- Select --</option>
+                <option value="2025-09-08|2025-09-18">08-09-2025 to 18-09-2025</option>
+            </select>
+            <button id="btnApply">Apply</button>
+            <button id="btnExcel" style="display:none;">Excel</button>
+        </div>
+
+        <!-- Info text -->
+        <span id="info" class="info"></span>
+    </div>
+</header>
+
+<main id="modules"></main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
