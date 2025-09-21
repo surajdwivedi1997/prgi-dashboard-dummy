@@ -37,7 +37,10 @@ function buildShell() {
         const section = document.createElement('section');
         section.className = `module ${m}`;
         section.innerHTML = `
-            <h2>${ModuleLabels[m]}</h2>
+            <h2>
+                <span>${ModuleLabels[m]}</span>
+                <span class="toggle-icon">+</span>
+            </h2>
             <div class="grid" id="grid-${m}"></div>
         `;
         container.appendChild(section);
@@ -73,13 +76,10 @@ async function loadSummary() {
     }
 }
 
-// ✅ Excel Export in tabular format like screenshot
+// ✅ Excel Export
 function exportToExcel() {
-    console.log("Excel export triggered ✅");
-
     const wb = XLSX.utils.book_new();
 
-    // Build table data exactly like screenshot
     const ws_data = [
         [
             "S.No.",
@@ -93,7 +93,6 @@ function exportToExcel() {
         ]
     ];
 
-    // Add each module row
     let serial = 1;
     ModuleOrder.forEach(m => {
         const row = [
@@ -110,25 +109,21 @@ function exportToExcel() {
         serial++;
     });
 
-    // Add TOTAL row
-    const totals = ["Total", "", "", "", "", "", "", ""];
-    ws_data.push(totals);
+    ws_data.push(["Total", "", "", "", "", "", "", ""]);
 
     const ws = XLSX.utils.aoa_to_sheet(ws_data);
 
-    // Auto column width
     ws["!cols"] = [
-        { wch: 6 },   // S.No
-        { wch: 40 },  // Nature of Application
-        { wch: 55 },  // New Applications
-        { wch: 55 },  // Applications received from SA
-        { wch: 40 },  // Deficient
-        { wch: 35 },  // Under Process
-        { wch: 25 },  // Applications Rejected
-        { wch: 25 }   // Registration Granted
+        { wch: 6 },
+        { wch: 40 },
+        { wch: 55 },
+        { wch: 55 },
+        { wch: 40 },
+        { wch: 35 },
+        { wch: 25 },
+        { wch: 25 }
     ];
 
-    // Center align everything
     Object.keys(ws).forEach(cell => {
         if (cell[0] === '!') return;
         if (!ws[cell].s) ws[cell].s = {};
@@ -139,17 +134,52 @@ function exportToExcel() {
     XLSX.writeFile(wb, "Application_Status_Report.xlsx");
 }
 
-// ✅ Apply + Excel button logic
+// ✅ Apply + Excel button logic + Collapse for mobile
 document.addEventListener('DOMContentLoaded', () => {
-    buildShell();
+    buildShell(); // render modules
 
     const applyBtn = document.getElementById('btnApply');
     const excelBtn = document.getElementById('btnExcel');
 
+    // Attach collapse logic AFTER buildShell
+    function setupCollapse() {
+        const modules = document.querySelectorAll('.module');
+
+        if (window.innerWidth <= 767) {
+            // Mobile: collapsed by default
+            modules.forEach(mod => {
+                mod.classList.remove('open'); // start collapsed
+                const header = mod.querySelector('h2');
+                const icon = header.querySelector('.toggle-icon');
+                if (icon) icon.textContent = "+";
+
+                header.onclick = () => {
+                    mod.classList.toggle('open'); // toggle expand
+                    const icon = header.querySelector('.toggle-icon');
+                    if (mod.classList.contains('open')) {
+                        icon.textContent = "–"; // expanded
+                    } else {
+                        icon.textContent = "+"; // collapsed
+                    }
+                };
+            });
+        } else {
+            // Desktop: always expanded
+            modules.forEach(mod => {
+                mod.classList.add('open');
+                const icon = mod.querySelector('.toggle-icon');
+                if (icon) icon.style.display = "none";
+            });
+        }
+    }
+
+    setupCollapse(); // run once on load
+    window.addEventListener('resize', setupCollapse); // re-run on resize
+
     if (applyBtn) {
         applyBtn.addEventListener('click', () => {
             loadSummary().then(() => {
-                excelBtn.style.display = "inline-block"; // show Excel button only after Apply
+                excelBtn.style.display = "inline-block";
             });
         });
     }
